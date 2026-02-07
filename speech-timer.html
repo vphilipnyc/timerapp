@@ -344,7 +344,8 @@
                     { time: 360, icon: '☝️', text: '1 Finger' },
                     { time: 390, icon: '©️', text: 'Hold up a C' },
                     { time: 420, icon: '✊', text: 'Fist' },
-                    { time: 450, icon: '❌', text: 'Grace Period Ended' }
+                    { time: 450, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
                 ]
             },
             else: {
@@ -356,6 +357,8 @@
                     { time: 570, icon: '©️', text: 'Hold up a C' },
                     { time: 600, icon: '✊', text: 'Fist' },
                     { time: 630, icon: '❌', text: 'Grace Period Ended' }
+                    { time: 630, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
                 ]
             }
         };
@@ -393,6 +396,12 @@
             isRunning = true;
             document.getElementById('start-btn').innerHTML = '<i data-lucide="pause"></i>';
             document.getElementById('stop-btn').disabled = false;
+            
+            // Clear initial prompt immediately
+            if (seconds === 0) {
+                clearSignals();
+            }
+            
             initIcons();
             
             timerInterval = setInterval(() => {
@@ -409,6 +418,11 @@
             document.getElementById('stop-btn').disabled = true;
             document.getElementById('timer-view').classList.remove('pulse');
             initIcons();
+            
+            // Re-show prompt if stopped at 0
+            if (seconds === 0) {
+                showInitialPrompt();
+            }
         }
 
         function resetTimer() {
@@ -416,7 +430,15 @@
             seconds = 0;
             lastSignalTime = -1;
             updateDisplay();
-            clearSignals();
+            showInitialPrompt();
+        }
+
+        function showInitialPrompt() {
+            document.getElementById('signal-icon').innerHTML = '<i data-lucide="message-square"></i>';
+            document.getElementById('signal-text').innerText = 'Ask: Would you like time signals?';
+            document.getElementById('signal-container').style.opacity = '1';
+            document.getElementById('signal-text').style.color = 'var(--spotify-text-gray)';
+            initIcons();
         }
 
         function handleSliderChange(val) {
@@ -434,12 +456,17 @@
         }
 
         function clearSignals() {
-            document.getElementById('signal-icon').innerText = '';
-            document.getElementById('signal-text').innerText = '';
+            document.getElementById('signal-icon').innerHTML = '';
+            document.getElementById('signal-text').innerHTML = '';
             document.getElementById('signal-container').style.opacity = '0';
         }
 
         function checkSignals() {
+            if (seconds === 0 && !isRunning) {
+                showInitialPrompt();
+                return;
+            }
+
             const modeSignals = modes[currentMode].signals;
             const view = document.getElementById('timer-view');
             
@@ -469,13 +496,15 @@
 
             if (currentSignal) {
                 // Show signal if it's within 10 seconds of appearing,
-                // OR if it's the "Grace Period Ended" signal, keep it visible
-                if (seconds < currentSignal.time + 10 || currentSignal.text === 'Grace Period Ended') {
+                // OR if it's a persistent signal (Grace Period or Over Time), keep it visible
+                const isPersistent = currentSignal.text.includes('Grace Period Ended') || currentSignal.text.includes('Over Time');
+                
+                if (seconds < currentSignal.time + 10 || isPersistent) {
                     document.getElementById('signal-icon').innerText = currentSignal.icon;
-                    document.getElementById('signal-text').innerText = currentSignal.text;
+                    document.getElementById('signal-text').innerHTML = currentSignal.text;
                     document.getElementById('signal-container').style.opacity = '1';
                     
-                    if (currentSignal.text === 'Grace Period Ended') {
+                    if (isPersistent) {
                         document.getElementById('signal-text').style.color = 'var(--danger)';
                     } else {
                         document.getElementById('signal-text').style.color = '#fbbf24';
@@ -484,7 +513,7 @@
                     // Hide after 10 seconds
                     clearSignals();
                 }
-            } else {
+            } else if (seconds > 0) {
                 clearSignals();
             }
         }
