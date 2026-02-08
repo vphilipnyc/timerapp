@@ -214,14 +214,6 @@
             transform: scale(1.1);
         }
 
-        .controls-top {
-            margin: 1rem 0 2rem 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-        }
-
         .control-btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
@@ -338,98 +330,6 @@
             font-weight: 700;
         }
 
-        .notes-panel {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--spotify-light-gray);
-            border-radius: 1rem;
-            text-align: left;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: var(--spotify-text-gray);
-            border: 1px solid rgba(255,255,255,0.05);
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .notes-panel h3 {
-            margin: 0;
-            color: var(--spotify-white);
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .notes-panel h3 span {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .notes-content-wrapper {
-            display: none;
-            margin-top: 1.5rem;
-            animation: slideDown 0.3s ease;
-        }
-
-        .notes-panel.expanded .notes-content-wrapper {
-            display: block;
-        }
-
-        .notes-panel.expanded .chevron-icon {
-            transform: rotate(180deg);
-        }
-
-        .chevron-icon {
-            transition: transform 0.3s ease;
-            color: var(--spotify-text-gray);
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .notes-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        @media (max-width: 500px) {
-            .notes-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        .note-item b {
-            color: var(--spotify-white);
-            display: block;
-            margin-bottom: 0.25rem;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .rules-footer {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 0.75rem;
-            color: var(--spotify-text-gray);
-            font-style: italic;
-            grid-column: span 2;
-        }
     </style>
 </head>
 <body>
@@ -439,25 +339,17 @@
             <h1>Speech Timers</h1>
             <div class="menu">
                 <!-- 10 Minute Events -->
-                <button class="btn btn-primary" onclick="setMode('oi')">OI</button>
-                <button class="btn btn-primary" onclick="setMode('poi')">POI</button>
-                <button class="btn btn-primary" onclick="setMode('dec')">Declamation</button>
-                <button class="btn btn-primary" onclick="setMode('oo')">Oratory (OO)</button>
-                <button class="btn btn-primary" onclick="setMode('info')">Informative</button>
-                <button class="btn btn-primary" onclick="setMode('hidi')">HI / DI / DP</button>
-                <button class="btn btn-primary" onclick="setMode('duo')">Duo Interp</button>
-                <button class="btn btn-primary" onclick="setMode('else')">Other (10m)</button>
+                <button class="btn btn-primary" onclick="setMode('xtmp')">XTMP</button>
                 
                 <!-- Other Events -->
-                <button class="btn btn-primary" onclick="setMode('xtmp')">XTMP (7m)</button>
                 <button class="btn btn-primary" onclick="setMode('storytelling')">Storytelling</button>
-                <button class="btn btn-primary" onclick="setMode('imp_speech')">Impromptu</button>
                 <button class="btn btn-primary" onclick="setMode('sales')">Sales Pitch</button>
                 
-                <!-- Prep Modes -->
-                <button class="btn btn-secondary" onclick="setMode('imp_prep')">IMP Prep (2:00)</button>
-                <button class="btn btn-secondary" onclick="setMode('sight_prep')">Sight Prep (2:00)</button>
-                <button class="btn btn-secondary" onclick="setMode('sight_perf')">Sight Perf (Up)</button>
+                <!-- Prep and Response -->
+                <button class="btn btn-secondary" onclick="setMode('prep')">Prep Timer (2:00)</button>
+                <button class="btn btn-primary" onclick="setMode('imp_speech')">Impromptu</button>
+                <button class="btn btn-primary" onclick="setMode('sight_perf')">Sight Reading</button>
+                <button class="btn btn-primary" onclick="setMode('ten_min')">All Other Events</button>
             </div>
         </div>
 
@@ -487,14 +379,6 @@
                 <button id="stop-btn" class="control-btn stop-btn" onclick="stopTimer()" disabled title="Stop">
                     <i data-lucide="square"></i>
                 </button>
-            </div>
-
-            <div id="notes-panel" class="notes-panel">
-                <h3 onclick="toggleNotes()">
-                    <span><i data-lucide="info"></i> Event Rules</span>
-                    <i data-lucide="chevron-down" class="chevron-icon"></i>
-                </h3>
-                <div id="notes-content" class="notes-content-wrapper"></div>
             </div>
         </div>
     </div>
@@ -560,66 +444,13 @@
         ];
 
         const modes = {
-            oi: {
-                name: "Oral Interpretation (OI)", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "On Book", movement: "Suitable to reading. Hands to enhance; feet must stay in 1-step \"box\".", intro: "Introduce title/author (memorized - binder closed).", misc: "Balance eye contact and reading. Feet 1/2 step shift maximum for emphasis." }
-            },
-            poi: {
-                name: "Program Oral Interp (POI)", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "On Book/Memorized. Binder as prop allowed if illusion of reading is kept.", movement: "Moving with purpose. Hand gestures allowed if binder stays in hands.", intro: "Introduce title/author (memorized - binder closed).", misc: "Must use at least 2 of (Poetry, Prose, Drama) and 3+ sources total." }
-            },
-            dec: {
-                name: "Declamation (DEC)", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "Off Book", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "State name of original speaker, title, and circumstances.", misc: "Do not recreate original speaker. Focus on conveying the original message." }
-            },
-            oo: {
-                name: "Original Oratory (OO)", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "Off Book", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "Formal introduction not required.", misc: "Max 150 words of direct quotes. Speech must be organized." }
-            },
-            info: {
-                name: "Informative Speaking", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "Off Book", movement: "Moving with purpose.", intro: "Formal introduction not required.", misc: "Visual aids allowed (No electronic, banned items, live animals, or people)." }
-            },
-            hidi: {
-                name: "Humorous / Dramatic Interp", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "Off Book", movement: "Non-standing positions should not dominate performance.", intro: "Must introduce title and author of material.", misc: "Characters should be distinguishable by voices and movements." }
-            },
-            duo: {
-                name: "Duo Interpretation", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "Off Book", movement: "NO TOUCHING OR LOOKING AT EACH OTHER (except in intros).", intro: "Must introduce title and author of material.", misc: "Students may look at each other only during introduction. Judge as a team." }
-            },
-            xtmp: {
-                name: "Extemporaneous (XTMP)", maxTime: 700, signals: SIGNALS_7M,
-                notes: { book: "JV: 3x5 Notecard allowed. Varsity: Off Book.", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "Students should introduce points being made.", misc: "Speech should be organized and answer the specific question given." }
-            },
-            storytelling: {
-                name: "Storytelling", maxTime: 700, signals: SIGNALS_5M,
-                notes: { book: "Off Book", movement: "Standing or seated (1 chair permitted). No props, costumes, or lighting.", intro: "Must introduce title and author of material.", misc: "Memorized single story/anecdote. Designed for children ages 3-7." }
-            },
-            imp_speech: {
-                name: "Impromptu (IMP)", maxTime: 700, signals: SIGNALS_3M,
-                notes: { book: "Off Book", movement: "Allowed.", intro: "Formal introduction not required.", misc: "2 min prep, 3 min performance. Tell a story. Rules may vary by tournament." }
-            },
-            sales: {
-                name: "Sales Pitch", maxTime: 500, signals: SIGNALS_3_30,
-                notes: { book: "Off Book", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "None required.", misc: "30s elevator pitch + 3 min sales. Topics: inventions, tech, or community needs." }
-            },
-            imp_prep: {
-                name: "Impromptu Prep", maxTime: 180, signals: SIGNALS_PREP,
-                notes: { book: "Off Book", movement: "Allowed.", intro: "None required.", misc: "2 minutes total allowed for preparation." }
-            },
-            sight_prep: {
-                name: "Sight Reading Prep", maxTime: 180, signals: SIGNALS_PREP,
-                notes: { book: "On Book (Read event)", movement: "Moving with purpose.", intro: "None required.", misc: "2 minutes to quickly interpret and perform a text." }
-            },
-            sight_perf: {
-                name: "Sight Reading Perf", maxTime: 900, signals: [],
-                notes: { book: "On Book (Read event)", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "None required.", misc: "No official limit on performance; dependent on text length." }
-            },
-            else: {
-                name: "Other Speech Events", maxTime: 900, signals: SIGNALS_10M,
-                notes: { book: "Consult event rules.", movement: "Consult event rules.", intro: "Consult event rules.", misc: "Timing: 10 mins with 30s grace." }
-            }
+            ten_min: { name: "All 10m Events", maxTime: 900, signals: SIGNALS_10M },
+            xtmp: { name: "Extemporaneous (XTMP)", maxTime: 700, signals: SIGNALS_7M },
+            storytelling: { name: "Storytelling", maxTime: 700, signals: SIGNALS_5M },
+            imp_speech: { name: "Impromptu (IMP)", maxTime: 700, signals: SIGNALS_3M },
+            sales: { name: "Sales Pitch", maxTime: 500, signals: SIGNALS_3_30 },
+            prep: { name: "Prep Timer", maxTime: 180, signals: SIGNALS_PREP },
+            sight_perf: { name: "Sight Reading Performance", maxTime: 900, signals: [] }
         };
 
         function initIcons() {
@@ -633,32 +464,8 @@
             document.getElementById('mode-display').innerText = modes[mode].name;
             document.getElementById('timer-slider').max = modes[mode].maxTime;
             
-            // Set Notes
-            const n = modes[mode].notes;
-            const content = `
-                <div class="notes-grid">
-                    <div class="note-item"><b>On/Off Book</b>${n.book}</div>
-                    <div class="note-item"><b>Movement</b>${n.movement}</div>
-                    <div class="note-item"><b>Introduction</b>${n.intro}</div>
-                    <div class="note-item"><b>Misc. Notes</b>${n.misc}</div>
-                    <div class="rules-footer">
-                        Overall: NO PROPS. Over allotted time (+30s grace) = Cannot be ranked 1st.<br>
-                        JH: No penalty for on-book. If an off-book event has all on-book students, no half-bids awarded after 12/15.
-                    </div>
-                </div>
-            `;
-            document.getElementById('notes-content').innerHTML = content;
-            
-            // Default to collapsed
-            document.getElementById('notes-panel').classList.remove('expanded');
-            
             resetTimer();
             initIcons();
-        }
-
-        function toggleNotes() {
-            const panel = document.getElementById('notes-panel');
-            panel.classList.toggle('expanded');
         }
 
         function goBack() {
@@ -737,7 +544,7 @@
             document.getElementById('signal-icon').innerHTML = '<i data-lucide="message-square"></i>';
             document.getElementById('signal-text').innerText = 'Ask: Would you like time signals?';
             document.getElementById('signal-container').style.opacity = '1';
-            document.getElementById('signal-text').style.color = 'var(--spotify-text-gray)';
+            document.getElementById('signal-text').style.color = '#fbbf24';
             initIcons();
         }
 
