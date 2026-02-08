@@ -51,14 +51,20 @@
         }
 
         .menu {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
 
+        @media (max-width: 600px) {
+            .menu {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .btn {
-            padding: 0.875rem 1.5rem;
-            font-size: 1rem;
+            padding: 1rem 1.25rem;
+            font-size: 0.85rem;
             font-weight: 700;
             border: none;
             border-radius: 500px; /* Spotify style pills */
@@ -208,6 +214,14 @@
             transform: scale(1.1);
         }
 
+        .controls-top {
+            margin: 1rem 0 2rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
         .control-btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
@@ -219,16 +233,44 @@
             background: var(--spotify-white);
             color: var(--spotify-black);
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border: none;
+            transition: all 0.2s ease;
         }
-        
+
         .play-btn svg {
-            color: var(--spotify-black) !important;
+            fill: var(--spotify-black);
+            width: 28px;
+            height: 28px;
         }
 
         .play-btn:hover {
             transform: scale(1.06);
-            background: var(--spotify-white); /* Keep white background */
-            color: var(--spotify-black); /* Keep black icon */
+            background: var(--spotify-white);
+        }
+
+        .play-btn:active {
+            transform: scale(0.98);
+        }
+
+        .reset-btn-styled {
+            width: 44px;
+            height: 44px;
+            border: none !important;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--spotify-text-gray);
+            transition: all 0.2s;
+        }
+
+        .reset-btn-styled:hover {
+            color: var(--spotify-white) !important;
+            transform: scale(1.1);
         }
 
         .stop-btn {
@@ -260,27 +302,133 @@
 
         .back-btn {
             position: absolute;
-            top: -1.5rem; /* More spacing above */
-            left: 0;
-            font-size: 0.9rem;
-            color: var(--spotify-text-gray);
-            border: none;
-            background: transparent;
-            cursor: pointer;
+            top: 1rem;
+            left: 1rem;
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            justify-content: center;
+            border: none;
+            color: var(--spotify-white);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
         }
-        .back-btn:hover { color: var(--spotify-white); }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.06);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+        }
 
         .mode-label {
             font-size: 0.9rem;
             color: var(--spotify-text-gray);
             text-transform: uppercase;
             letter-spacing: 0.15em;
-            margin-top: 1rem; /* Spacing under back button */
+            margin-top: 1rem;
             margin-bottom: 1.5rem;
             font-weight: 700;
+        }
+
+        .notes-panel {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--spotify-light-gray);
+            border-radius: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--spotify-text-gray);
+            border: 1px solid rgba(255,255,255,0.05);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notes-panel h3 {
+            margin: 0;
+            color: var(--spotify-white);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .notes-panel h3 span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notes-content-wrapper {
+            display: none;
+            margin-top: 1.5rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .notes-panel.expanded .notes-content-wrapper {
+            display: block;
+        }
+
+        .notes-panel.expanded .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .chevron-icon {
+            transition: transform 0.3s ease;
+            color: var(--spotify-text-gray);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 500px) {
+            .notes-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .note-item b {
+            color: var(--spotify-white);
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .rules-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            color: var(--spotify-text-gray);
+            font-style: italic;
+            grid-column: span 2;
         }
     </style>
 </head>
@@ -290,17 +438,32 @@
         <div id="main-menu" class="glass">
             <h1>Speech Timers</h1>
             <div class="menu">
-                <button class="btn btn-secondary" onclick="setMode('imp_prep')">Prep (2:00)</button>
-                <button class="btn btn-primary" onclick="setMode('imp_speech')">Impromptu (IMP)</button>
+                <!-- 10 Minute Events -->
+                <button class="btn btn-primary" onclick="setMode('oi')">OI</button>
+                <button class="btn btn-primary" onclick="setMode('poi')">POI</button>
+                <button class="btn btn-primary" onclick="setMode('dec')">Declamation</button>
+                <button class="btn btn-primary" onclick="setMode('oo')">Oratory (OO)</button>
+                <button class="btn btn-primary" onclick="setMode('info')">Informative</button>
+                <button class="btn btn-primary" onclick="setMode('hidi')">HI / DI / DP</button>
+                <button class="btn btn-primary" onclick="setMode('duo')">Duo Interp</button>
+                <button class="btn btn-primary" onclick="setMode('else')">Other (10m)</button>
+                
+                <!-- Other Events -->
+                <button class="btn btn-primary" onclick="setMode('xtmp')">XTMP (7m)</button>
                 <button class="btn btn-primary" onclick="setMode('storytelling')">Storytelling</button>
-                <button class="btn btn-primary" onclick="setMode('xtmp')">XTMP (5 Down)</button>
-                <button class="btn btn-primary" onclick="setMode('else')">Other Speech Events (2 Down)</button>
+                <button class="btn btn-primary" onclick="setMode('imp_speech')">Impromptu</button>
+                <button class="btn btn-primary" onclick="setMode('sales')">Sales Pitch</button>
+                
+                <!-- Prep Modes -->
+                <button class="btn btn-secondary" onclick="setMode('imp_prep')">IMP Prep (2:00)</button>
+                <button class="btn btn-secondary" onclick="setMode('sight_prep')">Sight Prep (2:00)</button>
+                <button class="btn btn-secondary" onclick="setMode('sight_perf')">Sight Perf (Up)</button>
             </div>
         </div>
 
         <!-- Timer View -->
         <div id="timer-view" class="glass timer-view">
-            <button class="back-btn" onclick="goBack()"><i data-lucide="chevron-left"></i> Back</button>
+            <button class="back-btn" onclick="goBack()" title="Back to menu"><i data-lucide="chevron-left"></i></button>
             <div id="mode-display" class="mode-label">Mode</div>
             
             <div id="signal-container" class="signal-container">
@@ -314,8 +477,8 @@
                 <input type="range" id="timer-slider" min="0" max="700" value="0" oninput="handleSliderChange(this.value)">
             </div>
 
-            <div class="controls">
-                <button id="reset-btn" class="control-btn" onclick="resetTimer()" title="Reset">
+            <div class="controls" style="margin: 1rem 0 2rem 0;">
+                <button id="reset-btn" class="control-btn reset-btn-styled" onclick="resetTimer()" title="Reset">
                     <i data-lucide="rotate-ccw"></i>
                 </button>
                 <button id="start-btn" class="control-btn play-btn" onclick="toggleTimer()" title="Start">
@@ -324,6 +487,14 @@
                 <button id="stop-btn" class="control-btn stop-btn" onclick="stopTimer()" disabled title="Stop">
                     <i data-lucide="square"></i>
                 </button>
+            </div>
+
+            <div id="notes-panel" class="notes-panel">
+                <h3 onclick="toggleNotes()">
+                    <span><i data-lucide="info"></i> Event Rules</span>
+                    <i data-lucide="chevron-down" class="chevron-icon"></i>
+                </h3>
+                <div id="notes-content" class="notes-content-wrapper"></div>
             </div>
         </div>
     </div>
@@ -335,66 +506,119 @@
         let isRunning = false;
         let lastSignalTime = -1;
 
+        const SIGNALS_10M = [
+            { time: 480, icon: '✌️', text: '2 Fingers' },
+            { time: 540, icon: '☝️', text: '1 Finger' },
+            { time: 570, icon: '©️', text: 'Hold up a C' },
+            { time: 600, icon: '✊', text: 'Fist' },
+            { time: 630, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+            { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
+        ];
+
+        const SIGNALS_7M = [
+            { time: 120, icon: '🖐️', text: '5 Fingers' },
+            { time: 180, icon: '🖖', text: '4 Fingers' },
+            { time: 240, icon: '🤟', text: '3 Fingers' },
+            { time: 300, icon: '✌️', text: '2 Fingers' },
+            { time: 360, icon: '☝️', text: '1 Finger' },
+            { time: 390, icon: '©️', text: 'Hold up a C' },
+            { time: 420, icon: '✊', text: 'Fist' },
+            { time: 450, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+            { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
+        ];
+
+        const SIGNALS_5M = [
+            { time: 180, icon: '✌️', text: '2 Fingers' },
+            { time: 240, icon: '☝️', text: '1 Finger' },
+            { time: 270, icon: '©️', text: 'Hold up a C' },
+            { time: 300, icon: '✊', text: 'Fist' },
+            { time: 330, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+            { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
+        ];
+
+        const SIGNALS_3M = [
+            { time: 60, icon: '✌️', text: '2 Fingers' },
+            { time: 120, icon: '☝️', text: '1 Finger' },
+            { time: 150, icon: '©️', text: 'Hold up a C' },
+            { time: 180, icon: '✊', text: 'Fist' },
+            { time: 210, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+            { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
+        ];
+
+        const SIGNALS_3_30 = [
+            { time: 150, icon: '☝️', text: '1 Finger' },
+            { time: 180, icon: '©️', text: 'Hold up a C' },
+            { time: 210, icon: '✊', text: 'Fist' },
+            { time: 240, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+            { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
+        ];
+
+        const SIGNALS_PREP = [
+            { time: 60, icon: '☝️', text: '1 Minute Prep Remaining' },
+            { time: 90, icon: '©️', text: '30 Seconds Prep Remaining' },
+            { time: 120, icon: '✊', text: 'Prep Time Up' }
+        ];
+
         const modes = {
+            oi: {
+                name: "Oral Interpretation (OI)", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "On Book", movement: "Suitable to reading. Hands to enhance; feet must stay in 1-step \"box\".", intro: "Introduce title/author (memorized - binder closed).", misc: "Balance eye contact and reading. Feet 1/2 step shift maximum for emphasis." }
+            },
+            poi: {
+                name: "Program Oral Interp (POI)", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "On Book/Memorized. Binder as prop allowed if illusion of reading is kept.", movement: "Moving with purpose. Hand gestures allowed if binder stays in hands.", intro: "Introduce title/author (memorized - binder closed).", misc: "Must use at least 2 of (Poetry, Prose, Drama) and 3+ sources total." }
+            },
+            dec: {
+                name: "Declamation (DEC)", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "Off Book", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "State name of original speaker, title, and circumstances.", misc: "Do not recreate original speaker. Focus on conveying the original message." }
+            },
+            oo: {
+                name: "Original Oratory (OO)", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "Off Book", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "Formal introduction not required.", misc: "Max 150 words of direct quotes. Speech must be organized." }
+            },
+            info: {
+                name: "Informative Speaking", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "Off Book", movement: "Moving with purpose.", intro: "Formal introduction not required.", misc: "Visual aids allowed (No electronic, banned items, live animals, or people)." }
+            },
+            hidi: {
+                name: "Humorous / Dramatic Interp", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "Off Book", movement: "Non-standing positions should not dominate performance.", intro: "Must introduce title and author of material.", misc: "Characters should be distinguishable by voices and movements." }
+            },
+            duo: {
+                name: "Duo Interpretation", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "Off Book", movement: "NO TOUCHING OR LOOKING AT EACH OTHER (except in intros).", intro: "Must introduce title and author of material.", misc: "Students may look at each other only during introduction. Judge as a team." }
+            },
             xtmp: {
-                name: "XTMP 5 Down",
-                maxTime: 700, // Show signals up to 11:40
-                signals: [
-                    { time: 120, icon: '🖐️', text: '5 Fingers' },
-                    { time: 180, icon: '🖖', text: '4 Fingers' },
-                    { time: 240, icon: '🤟', text: '3 Fingers' },
-                    { time: 300, icon: '✌️', text: '2 Fingers' },
-                    { time: 360, icon: '☝️', text: '1 Finger' },
-                    { time: 390, icon: '©️', text: 'Hold up a C' },
-                    { time: 420, icon: '✊', text: 'Fist' },
-                    { time: 450, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
-                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
-                ]
-            },
-            imp_prep: {
-                name: "Impromptu Prep",
-                maxTime: 180, // 3:00 to allow for a bit of overage
-                signals: [
-                    { time: 60, icon: '☝️', text: '1 Minute Prep Remaining' },
-                    { time: 90, icon: '©️', text: '30 Seconds Prep Remaining' },
-                    { time: 120, icon: '✊', text: 'Prep Time Up' }
-                ]
-            },
-            imp_speech: {
-                name: "Impromptu (IMP)",
-                maxTime: 700, // Show signals up to 11:40
-                signals: [
-                    { time: 60, icon: '✌️', text: '2 Fingers' },
-                    { time: 120, icon: '☝️', text: '1 Finger' },
-                    { time: 150, icon: '©️', text: 'Hold up a C' },
-                    { time: 180, icon: '✊', text: 'Fist' },
-                    { time: 210, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
-                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
-                ]
+                name: "Extemporaneous (XTMP)", maxTime: 700, signals: SIGNALS_7M,
+                notes: { book: "JV: 3x5 Notecard allowed. Varsity: Off Book.", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "Students should introduce points being made.", misc: "Speech should be organized and answer the specific question given." }
             },
             storytelling: {
-                name: "Storytelling",
-                maxTime: 700,
-                signals: [
-                    { time: 180, icon: '✌️', text: '2 Fingers' },
-                    { time: 240, icon: '☝️', text: '1 Finger' },
-                    { time: 270, icon: '©️', text: 'Hold up a C' },
-                    { time: 300, icon: '✊', text: 'Fist' },
-                    { time: 330, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
-                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
-                ]
+                name: "Storytelling", maxTime: 700, signals: SIGNALS_5M,
+                notes: { book: "Off Book", movement: "Standing or seated (1 chair permitted). No props, costumes, or lighting.", intro: "Must introduce title and author of material.", misc: "Memorized single story/anecdote. Designed for children ages 3-7." }
+            },
+            imp_speech: {
+                name: "Impromptu (IMP)", maxTime: 700, signals: SIGNALS_3M,
+                notes: { book: "Off Book", movement: "Allowed.", intro: "Formal introduction not required.", misc: "2 min prep, 3 min performance. Tell a story. Rules may vary by tournament." }
+            },
+            sales: {
+                name: "Sales Pitch", maxTime: 500, signals: SIGNALS_3_30,
+                notes: { book: "Off Book", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "None required.", misc: "30s elevator pitch + 3 min sales. Topics: inventions, tech, or community needs." }
+            },
+            imp_prep: {
+                name: "Impromptu Prep", maxTime: 180, signals: SIGNALS_PREP,
+                notes: { book: "Off Book", movement: "Allowed.", intro: "None required.", misc: "2 minutes total allowed for preparation." }
+            },
+            sight_prep: {
+                name: "Sight Reading Prep", maxTime: 180, signals: SIGNALS_PREP,
+                notes: { book: "On Book (Read event)", movement: "Moving with purpose.", intro: "None required.", misc: "2 minutes to quickly interpret and perform a text." }
+            },
+            sight_perf: {
+                name: "Sight Reading Perf", maxTime: 900, signals: [],
+                notes: { book: "On Book (Read event)", movement: "Moving with purpose. Non-standing positions should not dominate.", intro: "None required.", misc: "No official limit on performance; dependent on text length." }
             },
             else: {
-                name: "Other Speech Events",
-                maxTime: 900, // Show signals up to 15 mins
-                signals: [
-                    { time: 480, icon: '✌️', text: '2 Fingers' },
-                    { time: 540, icon: '☝️', text: '1 Finger' },
-                    { time: 570, icon: '©️', text: 'Hold up a C' },
-                    { time: 600, icon: '✊', text: 'Fist' },
-                    { time: 630, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
-                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
-                ]
+                name: "Other Speech Events", maxTime: 900, signals: SIGNALS_10M,
+                notes: { book: "Consult event rules.", movement: "Consult event rules.", intro: "Consult event rules.", misc: "Timing: 10 mins with 30s grace." }
             }
         };
 
@@ -408,8 +632,33 @@
             document.getElementById('timer-view').style.display = 'block';
             document.getElementById('mode-display').innerText = modes[mode].name;
             document.getElementById('timer-slider').max = modes[mode].maxTime;
+            
+            // Set Notes
+            const n = modes[mode].notes;
+            const content = `
+                <div class="notes-grid">
+                    <div class="note-item"><b>On/Off Book</b>${n.book}</div>
+                    <div class="note-item"><b>Movement</b>${n.movement}</div>
+                    <div class="note-item"><b>Introduction</b>${n.intro}</div>
+                    <div class="note-item"><b>Misc. Notes</b>${n.misc}</div>
+                    <div class="rules-footer">
+                        Overall: NO PROPS. Over allotted time (+30s grace) = Cannot be ranked 1st.<br>
+                        JH: No penalty for on-book. If an off-book event has all on-book students, no half-bids awarded after 12/15.
+                    </div>
+                </div>
+            `;
+            document.getElementById('notes-content').innerHTML = content;
+            
+            // Default to collapsed
+            document.getElementById('notes-panel').classList.remove('expanded');
+            
             resetTimer();
             initIcons();
+        }
+
+        function toggleNotes() {
+            const panel = document.getElementById('notes-panel');
+            panel.classList.toggle('expanded');
         }
 
         function goBack() {
@@ -430,6 +679,14 @@
             if (isRunning) return;
             isRunning = true;
             document.getElementById('start-btn').innerHTML = '<i data-lucide="pause"></i>';
+            initIcons(); // Re-init to apply the correct style (filled icons are handled by CSS selection if needed, but Lucide needs JS)
+            
+            // Adjust pause icon style to be filled as well
+            const pauseSvg = document.querySelector('.play-btn svg');
+            if (pauseSvg) {
+                pauseSvg.style.fill = 'var(--spotify-black)';
+            }
+
             document.getElementById('stop-btn').disabled = false;
             
             // Clear initial prompt immediately
@@ -450,6 +707,14 @@
             clearInterval(timerInterval);
             isRunning = false;
             document.getElementById('start-btn').innerHTML = '<i data-lucide="play"></i>';
+            initIcons();
+            
+            // Ensure play icon is filled
+            const playSvg = document.querySelector('.play-btn svg');
+            if (playSvg) {
+                playSvg.style.fill = 'var(--spotify-black)';
+            }
+
             document.getElementById('stop-btn').disabled = true;
             document.getElementById('timer-view').classList.remove('pulse');
             initIcons();
