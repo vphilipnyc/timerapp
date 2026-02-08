@@ -314,6 +314,18 @@
             font-weight: 700;
         }
 
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -339,7 +351,7 @@
             <div id="time-limit-desc" style="font-size: 0.85rem; color: var(--spotify-text-gray); margin-bottom: 2rem; font-weight: 500;">Time limit</div>
             <!-- Prep Timer Section (only for Impromptu and Sight Reading) -->
             <div id="prep-timer-section" style="display: none; margin-bottom: 1rem; padding-bottom: 1rem;">
-                <div class="mode-label" style="color: var(--spotify-green); margin-bottom: 1rem;">Prep Timer (2 Minutes)</div>
+                <label for="prep-timer-slider" class="mode-label" style="color: var(--spotify-green); margin-bottom: 1rem; display: block;">Prep Timer (2 Minutes)</label>
                 
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <!-- Small signal indicator for Prep -->
@@ -378,6 +390,7 @@
             <div id="timer-display" class="timer-display">00:00</div>
 
             <div class="slider-container">
+                <label for="timer-slider" class="sr-only">Seek timer</label>
                 <input type="range" id="timer-slider" min="0" max="700" value="0" oninput="handleSliderChange(this.value)">
             </div>
 
