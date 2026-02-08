@@ -51,15 +51,9 @@
         }
 
         .menu {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
-        }
-
-        @media (max-width: 600px) {
-            .menu {
-                grid-template-columns: 1fr;
-            }
         }
 
         .btn {
@@ -275,6 +269,7 @@
         
         .stop-btn svg {
             color: var(--spotify-white) !important;
+            fill: var(--spotify-white);
         }
 
         .stop-btn:hover:not(:disabled) {
@@ -338,17 +333,11 @@
         <div id="main-menu" class="glass">
             <h1>Speech Timers</h1>
             <div class="menu">
-                <!-- 10 Minute Events -->
-                <button class="btn btn-primary" onclick="setMode('xtmp')">XTMP</button>
-                
-                <!-- Other Events -->
-                <button class="btn btn-primary" onclick="setMode('storytelling')">Storytelling</button>
-                <button class="btn btn-primary" onclick="setMode('sales')">Sales Pitch</button>
-                
-                <!-- Prep and Response -->
-                <button class="btn btn-secondary" onclick="setMode('prep')">Prep Timer (2:00)</button>
                 <button class="btn btn-primary" onclick="setMode('imp_speech')">Impromptu</button>
+                <button class="btn btn-primary" onclick="setMode('sales')">Sales Pitch</button>
                 <button class="btn btn-primary" onclick="setMode('sight_perf')">Sight Reading</button>
+                <button class="btn btn-primary" onclick="setMode('storytelling')">Storytelling</button>
+                <button class="btn btn-primary" onclick="setMode('xtmp')">XTMP</button>
                 <button class="btn btn-primary" onclick="setMode('ten_min')">All Other Events</button>
             </div>
         </div>
@@ -356,6 +345,35 @@
         <!-- Timer View -->
         <div id="timer-view" class="glass timer-view">
             <button class="back-btn" onclick="goBack()" title="Back to menu"><i data-lucide="chevron-left"></i></button>
+            
+            <!-- Prep Timer Section (only for Impromptu and Sight Reading) -->
+            <div id="prep-timer-section" style="display: none; border-bottom: 1px solid var(--spotify-light-gray); margin-bottom: 2.5rem; padding-bottom: 2rem;">
+                <div class="mode-label" style="color: var(--spotify-green); margin-bottom: 1rem;">Prep Timer (2 Minutes)</div>
+                
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <!-- Small signal indicator for Prep -->
+                    <div id="prep-signal-container" style="height: 30px; margin-bottom: 0.5rem; transition: opacity 0.3s; opacity: 0;">
+                        <span id="prep-signal-icon" style="font-size: 1.5rem; margin-right: 0.5rem;"></span>
+                        <span id="prep-signal-text" style="font-size: 1.1rem; font-weight: 600; color: #fbbf24;"></span>
+                    </div>
+                    
+                    <div id="prep-timer-display" class="timer-display" style="font-size: 4.5rem; margin: 0; line-height: 1;">00:00</div>
+                </div>
+                
+                <div class="slider-container" style="margin: 1.5rem 0 1rem 0;">
+                    <input type="range" id="prep-timer-slider" min="0" max="120" value="0" oninput="handlePrepSliderChange(this.value)">
+                </div>
+
+                <div class="controls" style="margin-top: 0.5rem;">
+                    <button id="prep-reset-btn" class="control-btn reset-btn-styled" onclick="resetPrepTimer()" title="Reset Prep">
+                        <i data-lucide="rotate-ccw"></i>
+                    </button>
+                    <button id="prep-start-btn" class="control-btn play-btn" style="width: 48px; height: 48px;" onclick="togglePrepTimer()" title="Start Prep">
+                        <i id="prep-play-icon" data-lucide="play" style="width: 24px; height: 24px;"></i>
+                    </button>
+                </div>
+            </div>
+
             <div id="mode-display" class="mode-label">Mode</div>
             
             <div id="signal-container" class="signal-container">
@@ -385,9 +403,12 @@
 
     <script>
         let timerInterval = null;
+        let prepInterval = null;
         let seconds = 0;
+        let prepSeconds = 0; 
         let currentMode = '';
         let isRunning = false;
+        let isPrepRunning = false;
         let lastSignalTime = -1;
 
         const SIGNALS_10M = [
@@ -447,10 +468,9 @@
             ten_min: { name: "All 10m Events", maxTime: 900, signals: SIGNALS_10M },
             xtmp: { name: "Extemporaneous (XTMP)", maxTime: 700, signals: SIGNALS_7M },
             storytelling: { name: "Storytelling", maxTime: 700, signals: SIGNALS_5M },
-            imp_speech: { name: "Impromptu (IMP)", maxTime: 700, signals: SIGNALS_3M },
+            imp_speech: { name: "Impromptu (IMP)", maxTime: 700, signals: SIGNALS_3M, hasPrep: true },
             sales: { name: "Sales Pitch", maxTime: 500, signals: SIGNALS_3_30 },
-            prep: { name: "Prep Timer", maxTime: 180, signals: SIGNALS_PREP },
-            sight_perf: { name: "Sight Reading Performance", maxTime: 900, signals: [] }
+            sight_perf: { name: "Sight Reading", maxTime: 900, signals: [], hasPrep: true }
         };
 
         function initIcons() {
@@ -464,12 +484,23 @@
             document.getElementById('mode-display').innerText = modes[mode].name;
             document.getElementById('timer-slider').max = modes[mode].maxTime;
             
+            // Handle Prep Timer visibility
+            const prepSection = document.getElementById('prep-timer-section');
+            if (modes[mode].hasPrep) {
+                prepSection.style.display = 'block';
+                resetPrepTimer();
+            } else {
+                prepSection.style.display = 'none';
+                stopPrepTimer();
+            }
+
             resetTimer();
             initIcons();
         }
 
         function goBack() {
             stopTimer();
+            stopPrepTimer();
             document.getElementById('main-menu').style.display = 'block';
             document.getElementById('timer-view').style.display = 'none';
         }
@@ -517,7 +548,7 @@
             initIcons();
             
             // Ensure play icon is filled
-            const playSvg = document.querySelector('.play-btn svg');
+            const playSvg = document.querySelector('#start-btn svg');
             if (playSvg) {
                 playSvg.style.fill = 'var(--spotify-black)';
             }
@@ -529,6 +560,107 @@
             // Re-show prompt if stopped at 0
             if (seconds === 0) {
                 showInitialPrompt();
+            }
+        }
+
+        // Prep Timer Functions
+        function togglePrepTimer() {
+            if (isPrepRunning) {
+                stopPrepTimer();
+            } else {
+                startPrepTimer();
+            }
+        }
+
+        function startPrepTimer() {
+            if (isPrepRunning) return;
+            isPrepRunning = true;
+            document.getElementById('prep-start-btn').innerHTML = '<i data-lucide="pause"></i>';
+            initIcons();
+            
+            const pauseSvg = document.querySelector('#prep-start-btn svg');
+            if (pauseSvg) {
+                pauseSvg.style.fill = 'var(--spotify-black)';
+                pauseSvg.style.width = '24px';
+                pauseSvg.style.height = '24px';
+            }
+
+            prepInterval = setInterval(() => {
+                if (prepSeconds < 120) {
+                    prepSeconds++;
+                    updatePrepDisplay();
+                    checkPrepSignals();
+                } else {
+                    stopPrepTimer();
+                }
+            }, 1000);
+        }
+
+        function stopPrepTimer() {
+            clearInterval(prepInterval);
+            isPrepRunning = false;
+            document.getElementById('prep-start-btn').innerHTML = '<i data-lucide="play"></i>';
+            initIcons();
+            
+            const playSvg = document.querySelector('#prep-start-btn svg');
+            if (playSvg) {
+                playSvg.style.fill = 'var(--spotify-black)';
+                playSvg.style.width = '24px';
+                playSvg.style.height = '24px';
+            }
+        }
+
+        function resetPrepTimer() {
+            stopPrepTimer();
+            prepSeconds = 0;
+            updatePrepDisplay();
+            clearPrepSignals();
+        }
+
+        function handlePrepSliderChange(val) {
+            prepSeconds = parseInt(val);
+            updatePrepDisplay();
+            checkPrepSignals();
+        }
+
+        function updatePrepDisplay() {
+            const mins = Math.floor(prepSeconds / 60);
+            const secs = prepSeconds % 60;
+            document.getElementById('prep-timer-display').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            document.getElementById('prep-timer-slider').value = prepSeconds;
+        }
+
+        function clearPrepSignals() {
+            document.getElementById('prep-signal-container').style.opacity = '0';
+            document.getElementById('prep-signal-icon').innerText = '';
+            document.getElementById('prep-signal-text').innerText = '';
+        }
+
+        function checkPrepSignals() {
+            if (prepSeconds === 0) {
+                clearPrepSignals();
+                return;
+            }
+
+            let currentSignal = null;
+            for (let i = SIGNALS_PREP.length - 1; i >= 0; i--) {
+                if (prepSeconds >= SIGNALS_PREP[i].time) {
+                    currentSignal = SIGNALS_PREP[i];
+                    break;
+                }
+            }
+
+            if (currentSignal) {
+                if (prepSeconds < currentSignal.time + 10 || currentSignal.text === 'Prep Time Up') {
+                    document.getElementById('prep-signal-icon').innerText = currentSignal.icon;
+                    document.getElementById('prep-signal-text').innerText = currentSignal.text;
+                    document.getElementById('prep-signal-container').style.opacity = '1';
+                } else {
+                    clearPrepSignals();
+                }
+            } else {
+                clearPrepSignals();
             }
         }
 
