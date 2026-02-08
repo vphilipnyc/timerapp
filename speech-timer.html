@@ -335,10 +335,10 @@
         <div id="timer-view" class="glass timer-view">
             <button class="back-btn" onclick="goBack()" title="Back to menu"><i data-lucide="chevron-left"></i></button>
             
-            <div id="mode-display" class="mode-label" style="margin-bottom: 0.5rem;">Mode</div>
+            <div id="mode-display" class="mode-label" style="margin-bottom: 0.5rem;"></div>
             <div id="time-limit-desc" style="font-size: 0.85rem; color: var(--spotify-text-gray); margin-bottom: 2rem; font-weight: 500;">Time limit</div>
             <!-- Prep Timer Section (only for Impromptu and Sight Reading) -->
-            <div id="prep-timer-section" style="display: none; border-bottom: 1px solid var(--spotify-light-gray); margin-bottom: 2.5rem; padding-bottom: 2rem;">
+            <div id="prep-timer-section" style="display: none; margin-bottom: 1rem; padding-bottom: 1rem;">
                 <div class="mode-label" style="color: var(--spotify-green); margin-bottom: 1rem;">Prep Timer (2 Minutes)</div>
                 
                 <div style="display: flex; flex-direction: column; align-items: center;">
@@ -362,10 +362,13 @@
                     <button id="prep-start-btn" class="control-btn play-btn" style="width: 48px; height: 48px;" onclick="togglePrepTimer()" title="Start Prep">
                         <i id="prep-play-icon" data-lucide="play" style="width: 24px; height: 24px;"></i>
                     </button>
+                    <button id="prep-stop-btn" class="control-btn stop-btn" style="width: 48px; height: 48px;" onclick="stopPrepTimer()" disabled title="Stop Prep">
+                        <i data-lucide="square" style="width: 24px; height: 24px;"></i>
+                    </button>
                 </div>
             </div>
 
-            <div id="mode-display" class="mode-label">Mode</div>
+
             
             <div id="signal-container" class="signal-container">
                 <div id="signal-icon" class="signal-icon"></div>
@@ -577,6 +580,8 @@
                 pauseSvg.style.height = '24px';
             }
 
+            document.getElementById('prep-stop-btn').disabled = false;
+
             prepInterval = setInterval(() => {
                 if (prepSeconds < 120) {
                     prepSeconds++;
@@ -592,6 +597,7 @@
             clearInterval(prepInterval);
             isPrepRunning = false;
             document.getElementById('prep-start-btn').innerHTML = '<i data-lucide="play"></i>';
+            document.getElementById('prep-stop-btn').disabled = true;
             initIcons();
             
             const playSvg = document.querySelector('#prep-start-btn svg');
