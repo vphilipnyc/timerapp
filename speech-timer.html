@@ -288,10 +288,13 @@
     <div class="container">
         <!-- Main Menu -->
         <div id="main-menu" class="glass">
-            <h1>Speech Timer</h1>
+            <h1>Speech Timers</h1>
             <div class="menu">
+                <button class="btn btn-secondary" onclick="setMode('imp_prep')">Prep (2:00)</button>
+                <button class="btn btn-primary" onclick="setMode('imp_speech')">Impromptu (IMP)</button>
+                <button class="btn btn-primary" onclick="setMode('storytelling')">Storytelling</button>
                 <button class="btn btn-primary" onclick="setMode('xtmp')">XTMP (5 Down)</button>
-                <button class="btn btn-secondary" onclick="setMode('else')">Other Speech Events (2 Down)</button>
+                <button class="btn btn-primary" onclick="setMode('else')">Other Speech Events (2 Down)</button>
             </div>
         </div>
 
@@ -335,7 +338,7 @@
         const modes = {
             xtmp: {
                 name: "XTMP 5 Down",
-                maxTime: 600, // Show signals up to 10 mins
+                maxTime: 700, // Show signals up to 11:40
                 signals: [
                     { time: 120, icon: '🖐️', text: '5 Fingers' },
                     { time: 180, icon: '🖖', text: '4 Fingers' },
@@ -345,6 +348,39 @@
                     { time: 390, icon: '©️', text: 'Hold up a C' },
                     { time: 420, icon: '✊', text: 'Fist' },
                     { time: 450, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
+                ]
+            },
+            imp_prep: {
+                name: "Impromptu Prep",
+                maxTime: 180, // 3:00 to allow for a bit of overage
+                signals: [
+                    { time: 60, icon: '☝️', text: '1 Minute Prep Remaining' },
+                    { time: 90, icon: '©️', text: '30 Seconds Prep Remaining' },
+                    { time: 120, icon: '✊', text: 'Prep Time Up' }
+                ]
+            },
+            imp_speech: {
+                name: "Impromptu (IMP)",
+                maxTime: 700, // Show signals up to 11:40
+                signals: [
+                    { time: 60, icon: '✌️', text: '2 Fingers' },
+                    { time: 120, icon: '☝️', text: '1 Finger' },
+                    { time: 150, icon: '©️', text: 'Hold up a C' },
+                    { time: 180, icon: '✊', text: 'Fist' },
+                    { time: 210, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
+                    { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
+                ]
+            },
+            storytelling: {
+                name: "Storytelling",
+                maxTime: 700,
+                signals: [
+                    { time: 180, icon: '✌️', text: '2 Fingers' },
+                    { time: 240, icon: '☝️', text: '1 Finger' },
+                    { time: 270, icon: '©️', text: 'Hold up a C' },
+                    { time: 300, icon: '✊', text: 'Fist' },
+                    { time: 330, icon: '❌', text: 'Grace Period Ended<br><small>CANNOT BE RANKED FIRST IN ROUND</small>' },
                     { time: 660, icon: '✋', text: 'Over Time:<br>Stop Speaker Politely' }
                 ]
             },
