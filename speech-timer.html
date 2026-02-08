@@ -205,8 +205,8 @@
         .play-btn {
             width: 56px;
             height: 56px;
-            background: var(--spotify-white);
-            color: var(--spotify-black);
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--spotify-white);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -217,14 +217,23 @@
         }
 
         .play-btn svg {
-            fill: var(--spotify-black);
+            fill: var(--spotify-white);
             width: 28px;
             height: 28px;
+            transition: transform 0.2s ease;
+        }
+
+        .play-btn svg * {
+            stroke-linejoin: miter !important;
+            stroke-linecap: square !important;
         }
 
         .play-btn:hover {
-            transform: scale(1.06);
-            background: var(--spotify-white);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .play-btn:hover svg {
+            transform: scale(1.2);
         }
 
         .play-btn:active {
@@ -259,11 +268,22 @@
         .stop-btn svg {
             color: var(--spotify-white) !important;
             fill: var(--spotify-white);
+            transition: transform 0.2s ease;
+        }
+
+        .stop-btn svg * {
+            stroke-linejoin: miter !important;
+            stroke-linecap: square !important;
+            rx: 0 !important;
+            ry: 0 !important;
         }
 
         .stop-btn:hover:not(:disabled) {
-            transform: scale(1.06);
             background: #ff5f5f;
+        }
+
+        .stop-btn:hover:not(:disabled) svg {
+            transform: scale(1.2);
         }
 
         .stop-btn:disabled {
@@ -296,12 +316,21 @@
 
         .back-btn:hover {
             background: rgba(0, 0, 0, 0.9);
-            transform: scale(1.06);
         }
 
         .back-btn svg {
             width: 20px;
             height: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .back-btn svg * {
+            stroke-linejoin: miter !important;
+            stroke-linecap: square !important;
+        }
+
+        .back-btn:hover svg {
+            transform: scale(1.2);
         }
 
         .mode-label {
@@ -530,7 +559,7 @@
             // Adjust pause icon style to be filled as well
             const pauseSvg = document.querySelector('.play-btn svg');
             if (pauseSvg) {
-                pauseSvg.style.fill = 'var(--spotify-black)';
+                pauseSvg.style.fill = 'var(--spotify-white)';
             }
 
             document.getElementById('stop-btn').disabled = false;
@@ -558,7 +587,7 @@
             // Ensure play icon is filled
             const playSvg = document.querySelector('#start-btn svg');
             if (playSvg) {
-                playSvg.style.fill = 'var(--spotify-black)';
+                playSvg.style.fill = 'var(--spotify-white)';
             }
 
             document.getElementById('stop-btn').disabled = true;
@@ -588,7 +617,7 @@
             
             const pauseSvg = document.querySelector('#prep-start-btn svg');
             if (pauseSvg) {
-                pauseSvg.style.fill = 'var(--spotify-black)';
+                pauseSvg.style.fill = 'var(--spotify-white)';
                 pauseSvg.style.width = '24px';
                 pauseSvg.style.height = '24px';
             }
@@ -615,7 +644,7 @@
             
             const playSvg = document.querySelector('#prep-start-btn svg');
             if (playSvg) {
-                playSvg.style.fill = 'var(--spotify-black)';
+                playSvg.style.fill = 'var(--spotify-white)';
                 playSvg.style.width = '24px';
                 playSvg.style.height = '24px';
             }
